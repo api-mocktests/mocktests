@@ -1,6 +1,9 @@
 package org.api.mocktests.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.api.mocktests.exceptions.InvalidRequestException;
+import org.api.mocktests.exceptions.NotImplementedRequestException;
+import org.api.mocktests.exceptions.UnauthorizedRequestException;
 import org.api.mocktests.extensions.AuthenticateExtension;
 import org.api.mocktests.extensions.AuthenticatedTestExtension;
 import org.api.mocktests.models.Header;
@@ -28,7 +31,6 @@ public class MockTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    //classe alvo
     private static Object object;
 
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
@@ -40,6 +42,7 @@ public class MockTest {
     }
     public ResultActions performTest(Request request) throws Exception {
 
+        verifyRequest(request);
         if(request.getHeader() == null) {
             if(authenticateExtension.methodLoginIsImplement(object)) {
 
@@ -57,7 +60,7 @@ public class MockTest {
                                 .contentType(request.getContentType())
                                 .content(objectMapper.writeValueAsString(request.getBody())));
                     } else
-                        throw new IllegalAccessException("Username or password invalid! - LOGIN FAILED");
+                        throw new UnauthorizedRequestException("Login failed.");
                 }
             }
         }
@@ -68,12 +71,12 @@ public class MockTest {
                 .content(objectMapper.writeValueAsString(request.getBody())));
     }
 
-    private String convertTypeHeaders(Header header) {
+    private String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
         if(header.getTypeHeader().equals(TypeHeader.BEARER))
             return String.format("%s %s",header.getTypeHeader().name(), header.getValues()[0]);
 
-        return "NOT IMPLEMENTED";
+        throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
     }
     private MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
 
@@ -104,5 +107,12 @@ public class MockTest {
         if(params == null || params.length == 0)
             return patch(endpoint);
         return patch(endpoint, params);
+    }
+
+    private void verifyRequest(Request request) throws InvalidRequestException {
+        if(request.getOperation() == null)
+            throw new InvalidRequestException();
+        if(request.getEndpoint() == null)
+            throw new InvalidRequestException();
     }
 }
