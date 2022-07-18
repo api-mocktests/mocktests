@@ -62,6 +62,8 @@ public class MockTest {
                     } else
                         throw new UnauthorizedRequestException("Login failed.");
                 }
+                else
+                    throw new IllegalAccessException("NOT IMPLEMENTED");
             }
         }
 
