@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -88,6 +89,11 @@ public class MockTest {
     }
 
     private ResultActions invokeLogin(Request request) throws Exception {
+        System.out.println("OPERATION: "+ request.getOperation().name());
+        System.out.println("ENDPOINT: "+request.getEndpoint());
+        System.out.println("PARAMS: "+ Arrays.toString(request.getParams()));
+        System.out.println("CONTENT TYPE: "+request.getContentType());
+        System.out.println("BODY: "+request.getBody().toString());
         return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));

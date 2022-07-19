@@ -50,6 +50,7 @@ public class AuthenticateExtension {
             for(Field field : c.getDeclaredFields()) {
 
                 if(field.isAnnotationPresent(Authenticate.class)) {
+                    field.setAccessible(true);
                     return (Request) field.get(object);
                 }
             }
