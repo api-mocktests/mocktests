@@ -1,5 +1,6 @@
 package org.api.mocktests.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.exceptions.NotImplementedRequestException;
@@ -44,15 +45,16 @@ public class MockTest {
 
         verifyRequest(request);
         if(request.getHeader() == null) {
-            if(authenticateExtension.methodLoginIsImplement(object)) {
+            if(authenticateExtension.fieldLoginIsIstantiated(object)) {
 
                 String[] methodsStack = authenticatedTestExtension.getMethods();
                 List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
 
                 if(methodsAuthenticatedTest.contains(methodsStack[3])) {
 
-                    ResultActions resultLogin = authenticateExtension.invokeMethodLogin(object);
-                    if (resultLogin.andReturn().getResponse().getStatus() > 200 && resultLogin.andReturn().getResponse().getStatus() < 300) {
+                    Request requestLogin = authenticateExtension.getFieldLogin(object);
+                    ResultActions resultLogin = invokeLogin(requestLogin);
+                    if (resultLogin.andReturn().getResponse().getStatus() >= 200 && resultLogin.andReturn().getResponse().getStatus() < 300) {
                         String token = resultLogin.andReturn().getResponse().getContentAsString();
                         String[] values = token.split(" ");
                         return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
@@ -65,9 +67,13 @@ public class MockTest {
                 else
                     throw new IllegalAccessException("NOT IMPLEMENTED");
             }
+            else
+                return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+                        .contentType(request.getContentType())
+                        .content(objectMapper.writeValueAsString(request.getBody())));
         }
-
-        return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+        else
+            return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                 .header(request.getHeader().getName(), convertTypeHeaders(request.getHeader()))
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));
@@ -79,6 +85,12 @@ public class MockTest {
             return String.format("%s %s",header.getTypeHeader().name(), header.getValues()[0]);
 
         throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
+    }
+
+    private ResultActions invokeLogin(Request request) throws Exception {
+        return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+                .contentType(request.getContentType())
+                .content(objectMapper.writeValueAsString(request.getBody())));
     }
     private MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
 

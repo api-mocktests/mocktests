@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @EnableAutoConfiguration
@@ -22,10 +21,9 @@ public class MockTests {
     private MockMvc mockMvc;
 
     private MockTest mockTest = new MockTest(this);
+
     @Authenticate
-    ResultActions login() throws Exception {
-        return mockTest.performTest(new Request().operation(Operation.POST).endpoint("URL").contentType("application/json"));
-    }
+    private Request requestLogin = new Request().operation(Operation.POST).endpoint("URL").contentType("application/json");
 
     @Test
     @AuthenticatedTest
