@@ -45,6 +45,7 @@ public class AuthenticateExtension {
         try {
 
             Class<?> c = object.getClass();
+            System.out.println(c.getName());
             for (Method method : c.getDeclaredMethods()) {
 
                 if(method.isAnnotationPresent(Authenticate.class)) {
