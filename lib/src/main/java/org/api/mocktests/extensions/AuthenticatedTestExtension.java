@@ -37,18 +37,10 @@ public class AuthenticatedTestExtension {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         String[] listMethodsName = new String[5];
 
-        int index = 0;
         for(int i = 0; i < 5; i++) {
-            String nameMethod = stackTraceElements[i].getMethodName();
-            if(nameMethod.equals("invoke") || nameMethod.equals("execute")) {
-                index++;
-                i--;
-            }
-            else
-                listMethodsName[i] = nameMethod;
-
+            listMethodsName[i] = stackTraceElements[i].getMethodName();
         }
-
+        System.out.printf("[%s, %s, %s, %s, %s]%n",listMethodsName[0], listMethodsName[1], listMethodsName[2], listMethodsName[3], listMethodsName[4]);
         return listMethodsName;
     }
 }
