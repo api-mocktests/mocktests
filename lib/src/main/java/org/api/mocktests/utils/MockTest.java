@@ -94,9 +94,15 @@ public class MockTest {
         System.out.println("PARAMS: "+ Arrays.toString(request.getParams()));
         System.out.println("CONTENT TYPE: "+request.getContentType());
         System.out.println("BODY: "+request.getBody().toString()+"\n");
-        return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                .contentType(request.getContentType())
-                .content(objectMapper.writeValueAsString(request.getBody())));
+
+        try {
+            return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+                    .contentType(request.getContentType())
+                    .content(objectMapper.writeValueAsString(request.getBody())));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
     private MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
 
