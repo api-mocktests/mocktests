@@ -31,7 +31,7 @@ public class MockTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static Object object;
 
@@ -93,7 +93,7 @@ public class MockTest {
         System.out.println("ENDPOINT: "+request.getEndpoint());
         System.out.println("PARAMS: "+ Arrays.toString(request.getParams()));
         System.out.println("CONTENT TYPE: "+request.getContentType());
-        System.out.println("BODY: "+request.getBody().toString());
+        System.out.println("BODY: "+request.getBody().toString()+"\n");
         return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));
