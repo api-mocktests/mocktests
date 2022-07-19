@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class MockTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private static MockMvc mockMvc;
 
     @Autowired
     private final ObjectMapper objectMapper = new ObjectMapper();
