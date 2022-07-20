@@ -27,20 +27,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public class MockTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
-    @Autowired
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     private static Object object;
 
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension(object);
 
-    public MockTest(Object object) {
+    public MockTest(Object object, ObjectMapper objectMapper, MockMvc mockMvc) {
         super();
         MockTest.object = object;
+        this.objectMapper = objectMapper;
+        this.mockMvc = mockMvc;
     }
     public ResultActions performTest(Request request) throws Exception {
 

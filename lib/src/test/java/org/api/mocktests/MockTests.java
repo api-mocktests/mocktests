@@ -1,5 +1,6 @@
 package org.api.mocktests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.mocktests.annotations.Authenticate;
 import org.api.mocktests.annotations.AuthenticatedTest;
 import org.api.mocktests.models.Operation;
@@ -20,7 +21,9 @@ public class MockTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private MockTest mockTest = new MockTest(this);
+    @Autowired
+    private ObjectMapper objectMapper;
+    private MockTest mockTest = new MockTest(this, objectMapper, mockMvc);
 
     @Authenticate
     private Request requestLogin = new Request().operation(Operation.POST).endpoint("URL").contentType("application/json");
