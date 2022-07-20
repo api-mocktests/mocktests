@@ -88,6 +88,19 @@ public class MockTest {
     }
 
     private ResultActions invokeLogin(Request request) throws Exception {
+
+        if(mockMvc != null) {
+            System.out.println(mockMvc.toString());
+        }
+        else
+            System.out.println("mockMvc NULL");
+
+        if(objectMapper != null) {
+            System.out.println(objectMapper.toString());
+        }
+        else
+            System.out.println("objectMapper NULL");
+
         System.out.println("OPERATION: "+ request.getOperation().name());
         System.out.println("ENDPOINT: "+request.getEndpoint());
         System.out.println("PARAMS: "+ Arrays.toString(request.getParams()));
