@@ -67,13 +67,10 @@ public class MockTest {
                     } else
                         throw new UnauthorizedRequestException("Login failed.");
                 }
-                else
-                    throw new IllegalAccessException("NOT IMPLEMENTED");
             }
-            else
-                return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                        .contentType(request.getContentType())
-                        .content(objectMapper.writeValueAsString(request.getBody())));
+            return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+                    .contentType(request.getContentType())
+                    .content(objectMapper.writeValueAsString(request.getBody())));
         }
         else
             return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
@@ -97,14 +94,9 @@ public class MockTest {
         System.out.println("CONTENT TYPE: "+request.getContentType());
         System.out.println("BODY: "+request.getBody().toString()+"\n");
 
-        try {
-            return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                    .contentType(request.getContentType())
-                    .content(objectMapper.writeValueAsString(request.getBody())));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+        return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+                .contentType(request.getContentType())
+                .content(objectMapper.writeValueAsString(request.getBody())));
     }
     private MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
 
