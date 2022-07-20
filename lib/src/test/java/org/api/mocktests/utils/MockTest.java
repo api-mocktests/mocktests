@@ -1,6 +1,5 @@
 package org.api.mocktests.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.exceptions.NotImplementedRequestException;
@@ -26,7 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
-@SpringBootTest
 public class MockTest {
 
     @Autowired
