@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
+@SpringBootTest
 public class MockTest {
 
     @Autowired
