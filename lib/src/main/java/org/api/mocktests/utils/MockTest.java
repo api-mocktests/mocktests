@@ -29,17 +29,17 @@ public class MockTest {
 
     private final MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static Object object;
 
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension(object);
 
-    public MockTest(Object object, ObjectMapper objectMapper, MockMvc mockMvc) {
+    public MockTest(Object object, MockMvc mockMvc) {
         super();
         MockTest.object = object;
-        this.objectMapper = objectMapper;
         this.mockMvc = mockMvc;
     }
     public ResultActions performTest(Request request) throws Exception {

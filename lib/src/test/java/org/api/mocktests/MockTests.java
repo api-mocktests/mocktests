@@ -23,7 +23,7 @@ public class MockTests {
 
     @Autowired
     private ObjectMapper objectMapper;
-    private MockTest mockTest = new MockTest(this, objectMapper, mockMvc);
+    private MockTest mockTest = new MockTest(this, mockMvc);
 
     @Authenticate
     private Request requestLogin = new Request().operation(Operation.POST).endpoint("URL").contentType("application/json");
