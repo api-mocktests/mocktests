@@ -10,6 +10,7 @@ import org.api.mocktests.models.Header;
 import org.api.mocktests.models.Operation;
 import org.api.mocktests.models.Request;
 import org.api.mocktests.models.TypeHeader;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public final class MockTest {
 
     @Autowired
-    private final MockMvc mockMvc;
+    @InjectMocks
+    private MockMvc mockMvc;
 
     @Autowired
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -37,13 +39,12 @@ public final class MockTest {
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension(object);
 
-    public MockTest(MockMvc mockMvc, Object object) {
+    public MockTest(Object object) {
         super();
-        this.mockMvc = mockMvc;
         MockTest.object = object;
     }
 
-    public ResultActions performTest(Request request) throws Exception {
+    public void performTest(Request request) throws Exception {
 
         verifyRequest(request);
         if(request.getHeader() == null) {
@@ -59,7 +60,7 @@ public final class MockTest {
                     if (resultLogin.andReturn().getResponse().getStatus() >= 200 && resultLogin.andReturn().getResponse().getStatus() < 300) {
                         String token = resultLogin.andReturn().getResponse().getContentAsString();
                         String[] values = token.split(" ");
-                        return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+                        mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                                 .header(values[0], values[1], values[2])
                                 .contentType(request.getContentType())
                                 .content(objectMapper.writeValueAsString(request.getBody())));
@@ -67,12 +68,12 @@ public final class MockTest {
                         throw new UnauthorizedRequestException("Login failed.");
                 }
             }
-            return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+            mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                     .contentType(request.getContentType())
                     .content(objectMapper.writeValueAsString(request.getBody())));
         }
         else
-            return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
+            mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                 .header(request.getHeader().getName(), convertTypeHeaders(request.getHeader()))
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));

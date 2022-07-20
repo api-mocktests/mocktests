@@ -13,7 +13,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(classes = {org.api.mocktests.MockTestsLibrary.class})
 @EnableAutoConfiguration
 @AutoConfigureMockMvc
 public class MockTests {
@@ -23,26 +26,27 @@ public class MockTests {
 
     @Autowired
     private ObjectMapper objectMapper;
-    private MockTest mockTest = new MockTest(mockMvc, this);
+    private MockTest mockTest = new MockTest(this);
 
     @Authenticate
-    private Request requestLogin = new Request().operation(Operation.POST).endpoint("URL").contentType("application/json");
+    private final Request requestLogin = new Request().operation(Operation.POST).endpoint("/api").contentType("application/json");
 
     @Test
-    @AuthenticatedTest
+    //@AuthenticatedTest
     public void test01() throws Exception {
-        mockTest.performTest(new Request().operation(Operation.POST).endpoint("URL").contentType("application/json").body(new Object()));
+        mockMvc.perform(post("/api")).andExpect(status().is4xxClientError());
+        mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/1").contentType("application/json").body("objeto1"));
     }
 
     @Test
     @AuthenticatedTest
     public void test02() throws Exception {
-        mockTest.performTest(new Request().operation(Operation.POST).endpoint("URL").contentType("application/json").body(new Object()));
+        mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/2").contentType("application/json").body("objeto2"));
     }
 
     @Test
     @AuthenticatedTest
     public void test03() throws Exception {
-        mockTest.performTest(new Request().operation(Operation.POST).endpoint("URL").contentType("application/json").body(new Object()));
+        mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/3").contentType("application/json").body("objeto3"));
     }
 }
