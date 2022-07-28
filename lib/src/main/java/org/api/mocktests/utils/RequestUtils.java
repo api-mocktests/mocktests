@@ -23,13 +23,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@EnableAutoConfiguration
-@AutoConfigureMockMvc
-public final class MockTest {
-
-    @Autowired
-    @InjectMocks
-    private MockMvc mockMvc;
+public final class RequestUtils {
 
     @Autowired
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -39,12 +33,12 @@ public final class MockTest {
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension(object);
 
-    public MockTest(Object object) {
+    public RequestUtils(Object object) {
         super();
-        MockTest.object = object;
+        RequestUtils.object = object;
     }
 
-    public void performTest(Request request) throws Exception {
+    /*public void performTest(Request request) throws Exception {
 
         verifyRequest(request);
         if(request.getHeader() == null) {
@@ -77,7 +71,7 @@ public final class MockTest {
                 .header(request.getHeader().getName(), convertTypeHeaders(request.getHeader()))
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));
-    }
+    }*/
 
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
@@ -87,7 +81,7 @@ public final class MockTest {
         throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
     }
 
-    private ResultActions invokeLogin(Request request) throws Exception {
+    /*private ResultActions invokeLogin(Request request) throws Exception {
 
         if(mockMvc != null) {
             System.out.println(mockMvc.toString());
@@ -110,7 +104,8 @@ public final class MockTest {
         return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));
-    }
+    }*/
+
     public MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
 
         if(operation.equals(Operation.GET)) {
@@ -142,12 +137,13 @@ public final class MockTest {
         return patch(endpoint, params);
     }
 
+    /*
     private void verifyRequest(Request request) throws InvalidRequestException {
         if(request.getOperation() == null)
             throw new InvalidRequestException();
         if(request.getEndpoint() == null)
             throw new InvalidRequestException();
-    }
+    }*/
 
     public ObjectMapper getObjectMapper() {
         return objectMapper;

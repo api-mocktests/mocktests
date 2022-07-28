@@ -1,7 +1,8 @@
 package org.api.mocktests.models;
 
 import org.api.mocktests.exceptions.InvalidRequestException;
-import org.api.mocktests.utils.MockTest;
+import org.api.mocktests.utils.RequestUtils;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -15,15 +16,15 @@ public final class Request {
 
     private static Object[] params;
 
-    private static String contentType;
+    private static MediaType contentType;
 
     private static Object body;
 
-    private static MockTest mockUtilitaries;
+    private static RequestUtils requestUtils;
 
-    public Request(MockTest mockTest) {
+    public Request(RequestUtils requestUtils) {
         super();
-        mockUtilitaries = mockTest;
+        this.requestUtils = requestUtils;
     }
 
     public Request operation(Operation operation) throws Exception {
@@ -46,7 +47,7 @@ public final class Request {
         return this;
     }
 
-    public Request contentType(String contentType) {
+    public Request contentType(MediaType contentType) {
         Request.contentType = contentType;
         return this;
     }
@@ -61,11 +62,19 @@ public final class Request {
         verifyOperation();
         verifyEndpoint();
 
-        MockHttpServletRequestBuilder mockRequest = mockUtilitaries.convertOperation(operation, endpoint, params);
+        MockHttpServletRequestBuilder mockRequest = requestUtils.convertOperation(operation, endpoint, params);
+
+        if(header == null) {
+            
+        }
+        else {
+            mockRequest.header(header.getName(), requestUtils.convertTypeHeaders(header));
+        }
+
         if(contentType != null)
             mockRequest.contentType(contentType);
         if(body != null)
-            mockRequest.content(mockUtilitaries.getObjectMapper().writeValueAsString(body));
+            mockRequest.content(requestUtils.getObjectMapper().writeValueAsString(body));
 
         return mockRequest;
     }
@@ -79,33 +88,5 @@ public final class Request {
     private void verifyEndpoint() throws InvalidRequestException {
         if(endpoint == null)
             throw new InvalidRequestException("endpoint not nullable");
-    }
-
-    /*
-    *  GETTERS
-    */
-
-    public Operation getOperation() {
-        return operation;
-    }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public Header getHeader() {
-        return header;
-    }
-
-    public Object[] getParams() {
-        return params;
-    }
-
-    public Object getBody() {
-        return body;
-    }
-
-    public String getContentType() {
-        return contentType;
     }
 }
