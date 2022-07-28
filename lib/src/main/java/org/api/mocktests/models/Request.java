@@ -1,5 +1,10 @@
 package org.api.mocktests.models;
 
+import org.api.mocktests.exceptions.InvalidRequestException;
+import org.api.mocktests.utils.MockTest;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
 public final class Request {
 
     private static Operation operation;
@@ -14,12 +19,19 @@ public final class Request {
 
     private static Object body;
 
-    public Request operation(Operation operation) {
+    private static MockTest mockUtilitaries;
+
+    public Request(MockTest mockTest) {
+        super();
+        mockUtilitaries = mockTest;
+    }
+
+    public Request operation(Operation operation) throws Exception {
         Request.operation = operation;
         return this;
     }
 
-    public Request endpoint(String endpoint) {
+    public Request endpoint(String endpoint) throws Exception {
         Request.endpoint = endpoint;
         return this;
     }
@@ -42,6 +54,31 @@ public final class Request {
     public Request body(Object body) {
         Request.body = body;
         return this;
+    }
+
+    public RequestBuilder compileRequest() throws Exception {
+
+        verifyOperation();
+        verifyEndpoint();
+
+        MockHttpServletRequestBuilder mockRequest = mockUtilitaries.convertOperation(operation, endpoint, params);
+        if(contentType != null)
+            mockRequest.contentType(contentType);
+        if(body != null)
+            mockRequest.content(mockUtilitaries.getObjectMapper().writeValueAsString(body));
+
+        return mockRequest;
+    }
+
+    private void verifyOperation() throws InvalidRequestException {
+        if(operation == null)
+            throw new InvalidRequestException("operation not nullable");
+    }
+
+
+    private void verifyEndpoint() throws InvalidRequestException {
+        if(endpoint == null)
+            throw new InvalidRequestException("endpoint not nullable");
     }
 
     /*

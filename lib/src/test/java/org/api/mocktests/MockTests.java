@@ -28,25 +28,25 @@ public class MockTests {
     private ObjectMapper objectMapper;
     private MockTest mockTest = new MockTest(this);
 
-    @Authenticate
-    private final Request requestLogin = new Request().operation(Operation.POST).endpoint("/api").contentType("application/json");
+    //@Authenticate
+    //private final Request requestLogin = new Request().operation(Operation.POST).endpoint("/api").contentType("application/json");
 
     @Test
     //@AuthenticatedTest
     public void test01() throws Exception {
         mockMvc.perform(post("/api")).andExpect(status().is4xxClientError());
-        mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/1").contentType("application/json").body("objeto1"));
+        mockMvc.perform(new Request(mockTest).operation(Operation.POST).endpoint("/api/1").contentType("application/json").body("objeto1").compileRequest());
     }
 
     @Test
     @AuthenticatedTest
     public void test02() throws Exception {
-        mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/2").contentType("application/json").body("objeto2"));
+        mockMvc.perform(new Request(mockTest).operation(Operation.POST).endpoint("/api/2").contentType("application/json").body("objeto2").compileRequest());
     }
 
     @Test
     @AuthenticatedTest
     public void test03() throws Exception {
-        mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/3").contentType("application/json").body("objeto3"));
+        mockMvc.perform(new Request(mockTest).operation(Operation.POST).endpoint("/api/3").contentType("application/json").body("objeto3").compileRequest());
     }
 }

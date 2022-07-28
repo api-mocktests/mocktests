@@ -79,7 +79,7 @@ public final class MockTest {
                 .content(objectMapper.writeValueAsString(request.getBody())));
     }
 
-    private String convertTypeHeaders(Header header) throws NotImplementedRequestException {
+    public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
         if(header.getTypeHeader().equals(TypeHeader.BEARER))
             return String.format("%s %s",header.getTypeHeader().name(), header.getValues()[0]);
@@ -111,7 +111,7 @@ public final class MockTest {
                 .contentType(request.getContentType())
                 .content(objectMapper.writeValueAsString(request.getBody())));
     }
-    private MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
+    public MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
 
         if(operation.equals(Operation.GET)) {
             if(params == null || params.length == 0)
@@ -147,5 +147,9 @@ public final class MockTest {
             throw new InvalidRequestException();
         if(request.getEndpoint() == null)
             throw new InvalidRequestException();
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 }
