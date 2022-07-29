@@ -50,8 +50,7 @@ public class AuthenticateExtension {
 
                 if(method.isAnnotationPresent(Authenticate.class)) {
                     method.setAccessible(true);
-                    method.invoke(object);
-                    System.out.println("invoke0");
+                    return (ResultActions) method.invoke(object);
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {

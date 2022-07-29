@@ -71,12 +71,14 @@ public final class Request {
             if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
 
                 ResultActions resultLogin = requestUtils.invokeLogin();
+                if(resultLogin == null)
+                    System.out.println("resultLogin is null");
                 MockHttpServletResponse response = resultLogin.andReturn().getResponse();
                 if(response.getStatus() >= 200 && response.getStatus() < 300) {
                     String token = response.getContentAsString();
-                    String[] values = token.split(" ");
+                    String[] values = token.split(":");
                     System.out.println(token);
-                    mockRequest.header(values[0], values[1], values[2]);
+                    mockRequest.header("Authorization", "Bearer ", values[1]);
                 }
             }
         }
