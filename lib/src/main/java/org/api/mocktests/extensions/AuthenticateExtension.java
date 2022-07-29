@@ -2,10 +2,8 @@ package org.api.mocktests.extensions;
 
 import org.api.mocktests.annotations.Authenticate;
 import org.api.mocktests.annotations.AuthenticatedTest;
-import org.api.mocktests.models.Request;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -26,38 +24,20 @@ public class AuthenticateExtension {
         }
     }
 
-    public boolean fieldLoginIsIstantiated(Object object) {
+    public boolean methodLoginIsIstantiated(Object object) {
 
         try {
 
             Class<?> c = object.getClass();
-            for (Field field : c.getDeclaredFields()) {
+            for (Method method : c.getDeclaredMethods()) {
 
-                if(field.isAnnotationPresent(Authenticate.class))
+                if(method.isAnnotationPresent(Authenticate.class))
                     return true;
             }
             return false;
         } catch (SecurityException e) {
             return false;
         }
-    }
-
-    public Request getFieldLogin(Object object) {
-
-        try {
-
-            Class<?> c = object.getClass();
-            for(Field field : c.getDeclaredFields()) {
-
-                if(field.isAnnotationPresent(Authenticate.class)) {
-                    field.setAccessible(true);
-                    return (Request) field.get(object);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            System.out.println("erro ao converter");
-        }
-        return null;
     }
 
     public ResultActions invokeMethodLogin(Object object) {

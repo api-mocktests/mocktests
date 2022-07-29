@@ -3,7 +3,10 @@ package org.api.mocktests.models;
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.utils.RequestUtils;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 public final class Request {
@@ -65,7 +68,17 @@ public final class Request {
         MockHttpServletRequestBuilder mockRequest = requestUtils.convertOperation(operation, endpoint, params);
 
         if(header == null) {
-            
+            if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
+
+                ResultActions resultLogin = requestUtils.invokeLogin();
+                MockHttpServletResponse response = resultLogin.andReturn().getResponse();
+                if(response.getStatus() >= 200 && response.getStatus() < 300) {
+                    String token = response.getContentAsString();
+                    String[] values = token.split(" ");
+                    System.out.println(token);
+                    mockRequest.header(values[0], values[1], values[2]);
+                }
+            }
         }
         else {
             mockRequest.header(header.getName(), requestUtils.convertTypeHeaders(header));
