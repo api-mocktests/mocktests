@@ -37,7 +37,7 @@ public final class RequestUtils {
         String[] methodsStack = authenticatedTestExtension.getMethods();
         List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
 
-        if(methodsAuthenticatedTest.contains(methodsStack[3]))
+        if(methodsAuthenticatedTest.contains(methodsStack[4]))
             return true;
 
         return false;
