@@ -75,10 +75,9 @@ public final class Request {
                     System.out.println("resultLogin is null");
                 MockHttpServletResponse response = resultLogin.andReturn().getResponse();
                 if(response.getStatus() >= 200 && response.getStatus() < 300) {
-                    String token = response.getContentAsString();
-                    String[] values = token.split(":");
-                    System.out.println(token);
-                    mockRequest.header("Authorization", "Bearer ", values[1]);
+                    String tokenResponse = response.getContentAsString();
+                    String[] values = tokenResponse.split(":");
+                    mockRequest.header("Authorization", "Bearer " + values[1].split("\"")[1]);
                 }
             }
         }
