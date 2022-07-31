@@ -49,8 +49,10 @@ public final class RequestUtils {
 
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
-        if(header.getTypeHeader().equals(TypeHeader.BEARER))
-            return String.format("%s %s",header.getTypeHeader().name(), header.getValues()[0]);
+        if(header.getTypeHeader().equals(TypeHeader.BEARER)) {
+            System.out.printf("%s %s%n", header.getTypeHeader().name(), header.getValues()[0]);
+            return String.format("%s %s", header.getTypeHeader().name(), header.getValues()[0]);
+        }
 
         throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
     }
