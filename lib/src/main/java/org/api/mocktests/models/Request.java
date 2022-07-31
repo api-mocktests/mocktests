@@ -27,7 +27,7 @@ public final class Request {
 
     public Request(RequestUtils requestUtils) {
         super();
-        this.requestUtils = requestUtils;
+        Request.requestUtils = requestUtils;
     }
 
     public Request operation(Operation operation) throws Exception {
@@ -85,8 +85,12 @@ public final class Request {
             mockRequest.header(header.getName(), requestUtils.convertTypeHeaders(header));
         }
 
-        if(contentType != null)
+        if(contentType == null && requestUtils.verifyAnnotAutoConfigureContext()) {
+            mockRequest.contentType(requestUtils.getAutoConfigureContextType());
+        }
+        else
             mockRequest.contentType(contentType);
+
         if(body != null)
             mockRequest.content(requestUtils.getObjectMapper().writeValueAsString(body));
 

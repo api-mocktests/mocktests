@@ -8,11 +8,8 @@ import java.util.List;
 
 public class AuthenticatedTestExtension {
 
-    private Object object;
-
-    public AuthenticatedTestExtension(Object object) {
+    public AuthenticatedTestExtension() {
         super();
-        this.object = object;
     }
 
     public List<String> getMethodsAuthenticatedTest(Object object) {

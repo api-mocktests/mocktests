@@ -1,13 +1,16 @@
 package org.api.mocktests.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.exceptions.NotImplementedRequestException;
 import org.api.mocktests.extensions.AuthenticateExtension;
 import org.api.mocktests.extensions.AuthenticatedTestExtension;
+import org.api.mocktests.extensions.AutoConfigureContextTypeExtension;
 import org.api.mocktests.models.Header;
 import org.api.mocktests.models.Operation;
 import org.api.mocktests.models.TypeHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import java.util.List;
@@ -22,7 +25,9 @@ public final class RequestUtils {
     private static Object object;
 
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
-    private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension(object);
+    private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension();
+
+    private final AutoConfigureContextTypeExtension autoConfigureContextTypeExtension = new AutoConfigureContextTypeExtension();
 
     public RequestUtils(Object object) {
         super();
@@ -43,6 +48,14 @@ public final class RequestUtils {
         return false;
     }
 
+    public boolean verifyAnnotAutoConfigureContext() {
+        return autoConfigureContextTypeExtension.classIsAnnotAutoConfigureContext(object);
+    }
+
+    public String getAutoConfigureContextType() throws InvalidRequestException {
+        return autoConfigureContextTypeExtension.getAutoConfigureContextType(object);
+    }
+
     public boolean verifyMethodLogin() {
         return authenticateExtension.methodLoginIsIstantiated(object);
     }
@@ -50,8 +63,8 @@ public final class RequestUtils {
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
         if(header.getTypeHeader().equals(TypeHeader.BEARER)) {
-            System.out.printf("%s %s%n", header.getTypeHeader().name(), header.getValues()[0]);
-            return String.format("%s %s", header.getTypeHeader().name(), header.getValues()[0]);
+            System.out.printf("%s %s%n", header.getTypeHeader(), header.getValues()[0]);
+            return String.format("%s %s", header.getTypeHeader(), header.getValues()[0]);
         }
 
         throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
