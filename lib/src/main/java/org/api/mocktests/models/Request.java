@@ -4,7 +4,6 @@ import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.utils.RequestUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -71,13 +70,23 @@ public final class Request {
             if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
 
                 ResultActions resultLogin = requestUtils.invokeLogin();
-                if(resultLogin == null)
-                    System.out.println("resultLogin is null");
+                assert resultLogin != null;
                 MockHttpServletResponse response = resultLogin.andReturn().getResponse();
                 if(response.getStatus() >= 200 && response.getStatus() < 300) {
-                    String tokenResponse = response.getContentAsString();
-                    String[] values = tokenResponse.split(":");
-                    mockRequest.header("Authorization", "Bearer " + values[1].split("\"")[1]);
+                    if(response.getContentAsString().isEmpty() || response.getContentAsString().isBlank()) {
+                        String token = response.getHeader("Authorization");
+                        assert token != null;
+                        if(token.startsWith("Authorization:")) {
+                            String[] values = token.split(": ");
+                            token = values[1];
+                        }
+                        mockRequest.header("Authorization", token);
+                    }
+                    else {
+                        String tokenResponse = response.getContentAsString();
+                        String[] values = tokenResponse.split(":");
+                        mockRequest.header("Authorization", "Bearer " + values[1].split("\"")[1]);
+                    }
                 }
             }
         }

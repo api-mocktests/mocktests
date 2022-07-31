@@ -42,10 +42,7 @@ public final class RequestUtils {
         String[] methodsStack = authenticatedTestExtension.getMethods();
         List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
 
-        if(methodsAuthenticatedTest.contains(methodsStack[4]))
-            return true;
-
-        return false;
+        return methodsAuthenticatedTest.contains(methodsStack[4]);
     }
 
     public boolean verifyAnnotAutoConfigureContext() {
@@ -63,7 +60,6 @@ public final class RequestUtils {
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
         if(header.getTypeHeader().equals(TypeHeader.BEARER)) {
-            System.out.printf("%s %s%n", header.getTypeHeader().getTypeHeader(), header.getValues()[0]);
             return String.format("%s %s", header.getTypeHeader().getTypeHeader(), header.getValues()[0]);
         }
 

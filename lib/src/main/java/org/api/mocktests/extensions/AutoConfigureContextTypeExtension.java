@@ -2,7 +2,6 @@ package org.api.mocktests.extensions;
 
 import org.api.mocktests.annotations.AutoConfigureContextType;
 import org.api.mocktests.exceptions.InvalidRequestException;
-import org.springframework.http.MediaType;
 
 public class AutoConfigureContextTypeExtension {
 
@@ -14,7 +13,6 @@ public class AutoConfigureContextTypeExtension {
                 return true;
             }
         } catch (SecurityException e) {
-            System.out.println("security exception");
             return false;
         }
         return false;
