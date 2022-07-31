@@ -63,8 +63,8 @@ public final class RequestUtils {
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
 
         if(header.getTypeHeader().equals(TypeHeader.BEARER)) {
-            System.out.printf("%s %s%n", header.getTypeHeader(), header.getValues()[0]);
-            return String.format("%s %s", header.getTypeHeader(), header.getValues()[0]);
+            System.out.printf("%s %s%n", header.getTypeHeader().getTypeHeader(), header.getValues()[0]);
+            return String.format("%s %s", header.getTypeHeader().getTypeHeader(), header.getValues()[0]);
         }
 
         throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
