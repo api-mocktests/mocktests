@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-public final class Request {
+public class Request {
 
     private static Operation operation;
 
