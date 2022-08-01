@@ -8,54 +8,54 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-public class Request {
+public final class Request {
 
-    private static Operation operation;
+    private Operation operation;
 
-    private static String endpoint;
+    private String endpoint;
 
-    private static Header header;
+    private Header header;
 
-    private static Object[] params;
+    private Object[] params;
 
-    private static MediaType contentType;
+    private MediaType contentType;
 
-    private static Object body;
+    private Object body;
 
-    private static RequestUtils requestUtils;
+    private RequestUtils requestUtils;
 
     public Request(RequestUtils requestUtils) {
         super();
-        Request.requestUtils = requestUtils;
+        this.requestUtils = requestUtils;
     }
 
-    public Request operation(Operation operation) throws Exception {
-        Request.operation = operation;
+    public Request operation(Operation operation) {
+        this.operation = operation;
         return this;
     }
 
-    public Request endpoint(String endpoint) throws Exception {
-        Request.endpoint = endpoint;
+    public Request endpoint(String endpoint) {
+        this.endpoint = endpoint;
         return this;
     }
 
     public Request header(String name, TypeHeader typeHeader, String... values) {
-        Request.header = new Header(name, typeHeader, values);
+        this.header = new Header(name, typeHeader, values);
         return this;
     }
 
     public Request params(Object... params) {
-        Request.params = params;
+        this.params = params;
         return this;
     }
 
     public Request contentType(MediaType contentType) {
-        Request.contentType = contentType;
+        this.contentType = contentType;
         return this;
     }
 
     public Request body(Object body) {
-        Request.body = body;
+        this.body = body;
         return this;
     }
 
