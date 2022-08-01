@@ -22,7 +22,7 @@ public final class Request {
 
     private Object body;
 
-    private RequestUtils requestUtils;
+    private final RequestUtils requestUtils;
 
     public Request(RequestUtils requestUtils) {
         super();
@@ -100,10 +100,9 @@ public final class Request {
         else
             mockRequest.contentType(contentType);
 
-        if(body != null) {
+        if(body != null)
             mockRequest.content(requestUtils.getObjectMapper().writeValueAsString(body));
-            System.out.println(requestUtils.getObjectMapper().writeValueAsString(body));
-        }
+
 
         return mockRequest;
     }
