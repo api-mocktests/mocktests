@@ -100,8 +100,10 @@ public final class Request {
         else
             mockRequest.contentType(contentType);
 
-        if(body != null)
+        if(body != null) {
             mockRequest.content(requestUtils.getObjectMapper().writeValueAsString(body));
+            System.out.println(requestUtils.getObjectMapper().writeValueAsString(body));
+        }
 
         return mockRequest;
     }
