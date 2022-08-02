@@ -59,7 +59,7 @@ public final class Request {
         return this;
     }
 
-    public RequestBuilder compileRequest() throws Exception {
+    public RequestBuilder execute() throws Exception {
 
         verifyOperation();
         verifyEndpoint();
