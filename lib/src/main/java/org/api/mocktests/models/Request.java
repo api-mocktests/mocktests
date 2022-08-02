@@ -89,6 +89,12 @@ public final class Request {
                     }
                 }
             }
+            else if (requestUtils.verifyAnnotAutoConfigureHeader()) {
+                String[] headerValues = requestUtils.getAutoConfigureHeader();
+                if(headerValues.length < 2)
+                    throw new InvalidRequestException("invalid auto configure header");
+                mockRequest.header(headerValues[0],headerValues[1]);
+            }
         }
         else {
             mockRequest.header(header.getName(), requestUtils.convertTypeHeaders(header));

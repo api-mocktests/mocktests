@@ -5,12 +5,11 @@ import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.exceptions.NotImplementedRequestException;
 import org.api.mocktests.extensions.AuthenticateExtension;
 import org.api.mocktests.extensions.AuthenticatedTestExtension;
-import org.api.mocktests.extensions.AutoConfigureContextTypeExtension;
+import org.api.mocktests.extensions.AutoConfigureRequestExtension;
 import org.api.mocktests.models.Header;
 import org.api.mocktests.models.Operation;
 import org.api.mocktests.models.TypeHeader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import java.util.List;
@@ -27,7 +26,7 @@ public final class RequestUtils {
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension();
 
-    private final AutoConfigureContextTypeExtension autoConfigureContextTypeExtension = new AutoConfigureContextTypeExtension();
+    private final AutoConfigureRequestExtension autoConfigureRequestExtension = new AutoConfigureRequestExtension();
 
     public RequestUtils(Object object) {
         super();
@@ -46,11 +45,19 @@ public final class RequestUtils {
     }
 
     public boolean verifyAnnotAutoConfigureContext() {
-        return autoConfigureContextTypeExtension.classIsAnnotAutoConfigureContext(object);
+        return autoConfigureRequestExtension.classIsAnnotAutoConfigureContext(object);
+    }
+
+    public boolean verifyAnnotAutoConfigureHeader() {
+        return autoConfigureRequestExtension.classIsAnnotAutoConfigureHeader(object);
     }
 
     public String getAutoConfigureContextType() throws InvalidRequestException {
-        return autoConfigureContextTypeExtension.getAutoConfigureContextType(object);
+        return autoConfigureRequestExtension.getAutoConfigureContextType(object);
+    }
+
+    public String[] getAutoConfigureHeader() throws InvalidRequestException {
+        return autoConfigureRequestExtension.getAutoConfigureHeader(object);
     }
 
     public boolean verifyMethodLogin() {

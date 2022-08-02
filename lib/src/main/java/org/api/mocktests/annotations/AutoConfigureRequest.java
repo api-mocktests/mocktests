@@ -7,7 +7,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoConfigureContextType {
+public @interface AutoConfigureRequest {
 
     String mediatype() default "application/json";
+
+    String[] header() default {};
 }
