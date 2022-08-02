@@ -89,7 +89,7 @@ public final class Request {
                     }
                 }
             }
-            else if (requestUtils.verifyAnnotAutoConfigureHeader()) {
+            else if (requestUtils.verifyAnnotAutoConfigureHeader() && requestUtils.methodIsAnnotAuthTest()) {
                 String[] headerValues = requestUtils.getAutoConfigureHeader();
                 if(headerValues.length < 2)
                     throw new InvalidRequestException("invalid auto configure header");
