@@ -45,9 +45,17 @@ public class AuthenticatedTestExtension {
     public Class<?> getClass(StackTraceElement ste) {
         String className = ste.getClassName();
         try {
-            return ClassLoader.getPlatformClassLoader().loadClass(className);
+            return ClassLoader.getSystemClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            try {
+                return ClassLoader.getPlatformClassLoader().loadClass(className.split(".")[4]);
+            } catch (ClassNotFoundException ex) {
+                try {
+                    return ClassLoader.getSystemClassLoader().loadClass(className.split(".")[4]);
+                } catch (ClassNotFoundException exc) {
+                    throw new RuntimeException(exc);
+                }
+            }
         }
     }
 
