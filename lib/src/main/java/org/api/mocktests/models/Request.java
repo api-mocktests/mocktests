@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.util.MultiValueMap;
 
 public final class Request {
 
@@ -18,7 +19,7 @@ public final class Request {
 
     private Object[] pathParams;
 
-    private Object[] params;
+    private MultiValueMap<String, String> params;
 
     private MediaType contentType;
 
@@ -46,12 +47,12 @@ public final class Request {
         return this;
     }
 
-    public Request pathParams(Object... params) {
-        this.pathParams = params;
+    public Request pathParams(Object... pathParams) {
+        this.pathParams = pathParams;
         return this;
     }
 
-    public Request params(Object... params) {
+    public Request params(MultiValueMap<String, String> params) {
         this.params = params;
         return this;
     }
@@ -72,6 +73,9 @@ public final class Request {
         verifyEndpoint();
 
         MockHttpServletRequestBuilder mockRequest = requestUtils.convertOperation(operation, endpoint, pathParams);
+
+        if(params != null)
+            mockRequest.params(params);
 
         if(header == null) {
             if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
