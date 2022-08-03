@@ -84,6 +84,9 @@ public final class Request {
         if(params != null)
             mockRequest.params(params);
 
+        if(param != null)
+            mockRequest.param(param[0],param[1]);
+
         if(header == null) {
             if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
 
