@@ -16,6 +16,8 @@ public final class Request {
 
     private Header header;
 
+    private Object[] pathParams;
+
     private Object[] params;
 
     private MediaType contentType;
@@ -44,6 +46,11 @@ public final class Request {
         return this;
     }
 
+    public Request pathParams(Object... params) {
+        this.pathParams = params;
+        return this;
+    }
+
     public Request params(Object... params) {
         this.params = params;
         return this;
@@ -64,7 +71,7 @@ public final class Request {
         verifyOperation();
         verifyEndpoint();
 
-        MockHttpServletRequestBuilder mockRequest = requestUtils.convertOperation(operation, endpoint, params);
+        MockHttpServletRequestBuilder mockRequest = requestUtils.convertOperation(operation, endpoint, pathParams);
 
         if(header == null) {
             if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
