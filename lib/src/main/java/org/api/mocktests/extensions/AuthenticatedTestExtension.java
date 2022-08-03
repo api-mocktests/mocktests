@@ -12,12 +12,13 @@ public class AuthenticatedTestExtension {
         super();
     }
 
-    public List<String> getMethodsAuthenticatedTest(Object object) {
+    public List<String> getMethodsAuthenticatedTest(Class className) {
 
         List<String> listMethods = new ArrayList<>();
 
         try {
-            Class<?> c = object.getClass();
+            //Class<?> c = object.getClass();
+            Class<?> c = className;
             for(Method method : c.getDeclaredMethods()) {
                 if(method.isAnnotationPresent(AuthenticatedTest.class)) {
                     listMethods.add(method.getName());
@@ -29,14 +30,25 @@ public class AuthenticatedTestExtension {
 
         return listMethods;
     }
-    public String[] getMethods() {
+    public StackTraceElement getMethods() {
 
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        String[] listMethodsName = new String[5];
-
-        for(int i = 0; i < 5; i++) {
-            listMethodsName[i] = stackTraceElements[i].getMethodName();
-        }
-        return listMethodsName;
+        return Thread.currentThread().getStackTrace()[4];
+        //StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+//        String[] listMethodsName = new String[5];
+//
+//        for(int i = 0; i < 5; i++) {
+//            listMethodsName[i] = stackTraceElements[i].getMethodName();
+//        }
+//        return listMethodsName;
     }
+
+    public Class<?> getClass(StackTraceElement ste) {
+        String className = ste.getClassName();
+        try {
+            return ClassLoader.getPlatformClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

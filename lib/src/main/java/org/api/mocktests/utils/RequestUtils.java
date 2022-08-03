@@ -38,10 +38,13 @@ public final class RequestUtils {
     }
     public boolean methodIsAnnotAuthTest() {
 
-        String[] methodsStack = authenticatedTestExtension.getMethods();
-        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
+        //String[] methodsStack = authenticatedTestExtension.getMethods();
+        StackTraceElement ste = authenticatedTestExtension.getMethods();
+        Class<?> className = authenticatedTestExtension.getClass(ste);
 
-        return methodsAuthenticatedTest.contains(methodsStack[4]);
+        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(className);
+
+        return methodsAuthenticatedTest.contains(ste.getMethodName());
     }
 
     public boolean verifyAnnotAutoConfigureContext() {
