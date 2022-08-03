@@ -21,6 +21,8 @@ public final class Request {
 
     private MultiValueMap<String, String> params;
 
+    private String[] param;
+
     private MediaType contentType;
 
     private Object body;
@@ -54,6 +56,11 @@ public final class Request {
 
     public Request params(MultiValueMap<String, String> params) {
         this.params = params;
+        return this;
+    }
+
+    public Request param(String... param) {
+        this.param = param;
         return this;
     }
 
