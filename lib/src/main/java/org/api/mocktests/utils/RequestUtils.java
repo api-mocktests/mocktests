@@ -21,7 +21,7 @@ public final class RequestUtils {
     @Autowired
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static Object object;
+    private final Object object;
 
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension();
