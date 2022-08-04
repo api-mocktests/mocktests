@@ -21,7 +21,7 @@ public final class RequestUtils {
     @Autowired
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Object object;
+    private final Class<?> aClass;
 
     private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
     private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension();
@@ -30,17 +30,17 @@ public final class RequestUtils {
 
     public RequestUtils() {
         super();
-        object = this.getClass(this.getCurrentMethod());
+        aClass = this.getClass(this.getCurrentMethod());
     }
 
     public ResultActions invokeLogin() {
-        return authenticateExtension.invokeMethodLogin(object);
+        return authenticateExtension.invokeMethodLogin(aClass);
     }
     public boolean methodIsAnnotAuthTest() {
 
         //String[] methodsStack = authenticatedTestExtension.getMethods();
         StackTraceElement ste = authenticatedTestExtension.getMethods();
-        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
+        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(aClass);
 
         return methodsAuthenticatedTest.contains(ste.getMethodName());
     }
@@ -70,23 +70,23 @@ public final class RequestUtils {
     }
 
     public boolean verifyAnnotAutoConfigureContext() {
-        return autoConfigureRequestExtension.classIsAnnotAutoConfigureContext(object);
+        return autoConfigureRequestExtension.classIsAnnotAutoConfigureContext(aClass);
     }
 
     public boolean verifyAnnotAutoConfigureHeader() {
-        return autoConfigureRequestExtension.classIsAnnotAutoConfigureHeader(object);
+        return autoConfigureRequestExtension.classIsAnnotAutoConfigureHeader(aClass);
     }
 
     public String getAutoConfigureContextType() throws InvalidRequestException {
-        return autoConfigureRequestExtension.getAutoConfigureContextType(object);
+        return autoConfigureRequestExtension.getAutoConfigureContextType(aClass);
     }
 
     public String[] getAutoConfigureHeader() throws InvalidRequestException {
-        return autoConfigureRequestExtension.getAutoConfigureHeader(object);
+        return autoConfigureRequestExtension.getAutoConfigureHeader(aClass);
     }
 
     public boolean verifyMethodLogin() {
-        return authenticateExtension.methodLoginIsIstantiated(object);
+        return authenticateExtension.methodLoginIsIstantiated(aClass);
     }
 
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {

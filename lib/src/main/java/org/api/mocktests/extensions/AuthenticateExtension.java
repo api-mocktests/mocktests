@@ -8,12 +8,12 @@ import java.lang.reflect.Method;
 
 public class AuthenticateExtension {
 
-    public boolean methodLoginIsIstantiated(Object object) {
+    public boolean methodLoginIsIstantiated(Class<?> aClass) {
 
         try {
 
-            Class<?> c = object.getClass();
-            for (Method method : c.getDeclaredMethods()) {
+            //Class<?> c = object.getClass();
+            for (Method method : aClass.getDeclaredMethods()) {
 
                 if(method.isAnnotationPresent(Authenticate.class))
                     return true;
@@ -24,16 +24,15 @@ public class AuthenticateExtension {
         }
     }
 
-    public ResultActions invokeMethodLogin(Object object) {
+    public ResultActions invokeMethodLogin(Class<?> aClass) {
 
         try {
-
-            Class<?> c = object.getClass();
-            for (Method method : c.getDeclaredMethods()) {
+            //Class<?> c = object.getClass();
+            for (Method method : aClass.getDeclaredMethods()) {
 
                 if(method.isAnnotationPresent(Authenticate.class)) {
                     method.setAccessible(true);
-                    return (ResultActions) method.invoke(object);
+                    return (ResultActions) method.invoke(aClass);
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {

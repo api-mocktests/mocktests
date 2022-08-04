@@ -12,13 +12,13 @@ public class AuthenticatedTestExtension {
         super();
     }
 
-    public List<String> getMethodsAuthenticatedTest(Object object) {
+    public List<String> getMethodsAuthenticatedTest(Class<?> aClass) {
 
         List<String> listMethods = new ArrayList<>();
 
         try {
-            Class<?> c = object.getClass();
-            for(Method method : c.getDeclaredMethods()) {
+            //Class<?> c = object.getClass();
+            for(Method method : aClass.getDeclaredMethods()) {
                 if(method.isAnnotationPresent(AuthenticatedTest.class)) {
                     listMethods.add(method.getName());
                 }

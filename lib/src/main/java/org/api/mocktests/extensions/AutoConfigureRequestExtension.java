@@ -5,11 +5,11 @@ import org.api.mocktests.exceptions.InvalidRequestException;
 
 public class AutoConfigureRequestExtension {
 
-    public boolean classIsAnnotAutoConfigureContext(Object object) {
+    public boolean classIsAnnotAutoConfigureContext(Class<?> aClass) {
 
         try {
-            Class<?> c = object.getClass();
-            if(c.isAnnotationPresent(AutoConfigureRequest.class)) {
+            //Class<?> c = object.getClass();
+            if(aClass.isAnnotationPresent(AutoConfigureRequest.class)) {
                 return true;
             }
         } catch (SecurityException e) {
@@ -18,11 +18,11 @@ public class AutoConfigureRequestExtension {
         return false;
     }
 
-    public boolean classIsAnnotAutoConfigureHeader(Object object) {
+    public boolean classIsAnnotAutoConfigureHeader(Class<?> aClass) {
 
         try {
-            Class<?> c = object.getClass();
-            if(c.isAnnotationPresent(AutoConfigureRequest.class)) {
+            //Class<?> c = object.getClass();
+            if(aClass.isAnnotationPresent(AutoConfigureRequest.class)) {
                 return true;
             }
         } catch (SecurityException securityException) {
@@ -31,12 +31,11 @@ public class AutoConfigureRequestExtension {
         return false;
     }
 
-    public String getAutoConfigureContextType(Object object) throws InvalidRequestException {
-
+    public String getAutoConfigureContextType(Class<?> aClass) throws InvalidRequestException {
         try {
-            Class<?> c = object.getClass();
-            if(c.isAnnotationPresent(AutoConfigureRequest.class)) {
-                return c.getAnnotation(AutoConfigureRequest.class).mediatype();
+            //Class<?> c = object.getClass();
+            if(aClass.isAnnotationPresent(AutoConfigureRequest.class)) {
+                return aClass.getAnnotation(AutoConfigureRequest.class).mediatype();
             }
         } catch (Exception e) {
             throw new InvalidRequestException("contextType not definite");
@@ -45,12 +44,12 @@ public class AutoConfigureRequestExtension {
         return null;
     }
 
-    public String[] getAutoConfigureHeader(Object object) throws InvalidRequestException {
+    public String[] getAutoConfigureHeader(Class<?> aClass) throws InvalidRequestException {
 
         try {
-            Class<?> c = object.getClass();
-            if(c.isAnnotationPresent(AutoConfigureRequest.class)) {
-                return c.getAnnotation(AutoConfigureRequest.class).header();
+            //Class<?> c = object.getClass();
+            if(aClass.isAnnotationPresent(AutoConfigureRequest.class)) {
+                return aClass.getAnnotation(AutoConfigureRequest.class).header();
             }
         } catch (Exception e) {
             throw new InvalidRequestException("header not definite");
