@@ -28,9 +28,9 @@ public final class RequestUtils {
 
     private final AutoConfigureRequestExtension autoConfigureRequestExtension = new AutoConfigureRequestExtension();
 
-    public RequestUtils(Object object) {
+    public RequestUtils() {
         super();
-        RequestUtils.object = object;
+        object = this.getClass(this.getCurrentMethod());
     }
 
     public ResultActions invokeLogin() {
@@ -40,11 +40,33 @@ public final class RequestUtils {
 
         //String[] methodsStack = authenticatedTestExtension.getMethods();
         StackTraceElement ste = authenticatedTestExtension.getMethods();
-        Class<?> className = authenticatedTestExtension.getClass(ste);
-
-        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(className);
+        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
 
         return methodsAuthenticatedTest.contains(ste.getMethodName());
+    }
+
+    public StackTraceElement getCurrentMethod() {
+        return Thread.currentThread().getStackTrace()[4];
+    }
+
+    public Class<?> getClass(StackTraceElement stackTraceElement) {
+
+        String className = stackTraceElement.getClassName();
+        String[] fileClassName = className.split("\\.");
+        try {
+            return ClassLoader.getSystemClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+            /*try {
+                return ClassLoader.getPlatformClassLoader().loadClass(fileClassName[fileClassName.length - 1]);
+            } catch (ClassNotFoundException ex) {
+                try {
+                    return ClassLoader.getSystemClassLoader().loadClass(fileClassName[fileClassName.length - 1]);
+                } catch (ClassNotFoundException exc) {
+                    throw new RuntimeException(exc);
+                }
+            }*/
+        }
     }
 
     public boolean verifyAnnotAutoConfigureContext() {

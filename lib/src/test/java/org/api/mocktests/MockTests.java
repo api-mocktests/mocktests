@@ -23,12 +23,12 @@ public class MockTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private RequestUtils requestUtils = new RequestUtils(this);
+    //private RequestUtils requestUtils = new RequestUtils(this);
 
     @Test
     @AuthenticatedTest
     public void test01() throws Exception {
-        mockMvc.perform(new Request(requestUtils).operation(Operation.POST).endpoint("/api").execute()).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(new Request().operation(Operation.POST).endpoint("/api").execute()).andExpect(status().is2xxSuccessful());
     }
 
 }

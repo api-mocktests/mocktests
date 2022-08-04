@@ -12,13 +12,12 @@ public class AuthenticatedTestExtension {
         super();
     }
 
-    public List<String> getMethodsAuthenticatedTest(Class className) {
+    public List<String> getMethodsAuthenticatedTest(Object object) {
 
         List<String> listMethods = new ArrayList<>();
 
         try {
-            //Class<?> c = object.getClass();
-            Class<?> c = className;
+            Class<?> c = object.getClass();
             for(Method method : c.getDeclaredMethods()) {
                 if(method.isAnnotationPresent(AuthenticatedTest.class)) {
                     listMethods.add(method.getName());
@@ -41,22 +40,4 @@ public class AuthenticatedTestExtension {
 //        }
 //        return listMethodsName;
     }
-
-    public Class<?> getClass(StackTraceElement ste) {
-        String className = ste.getClassName();
-        try {
-            return ClassLoader.getSystemClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
-            try {
-                return ClassLoader.getPlatformClassLoader().loadClass(className.split(".")[4]);
-            } catch (ClassNotFoundException ex) {
-                try {
-                    return ClassLoader.getSystemClassLoader().loadClass(className.split(".")[4]);
-                } catch (ClassNotFoundException exc) {
-                    throw new RuntimeException(exc);
-                }
-            }
-        }
-    }
-
 }

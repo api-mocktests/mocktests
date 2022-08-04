@@ -29,9 +29,9 @@ public final class Request {
 
     private final RequestUtils requestUtils;
 
-    public Request(RequestUtils requestUtils) {
+    public Request() {
         super();
-        this.requestUtils = requestUtils;
+        this.requestUtils = new RequestUtils();
     }
 
     public Request operation(Operation operation) {
