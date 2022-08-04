@@ -30,16 +30,16 @@ public class AuthenticateExtension {
         try {
             //Class<?> c = object.getClass();
             Object object = aClass.newInstance();
-            System.out.println(object);
+            //System.out.println(object);
             //Constructor<?> constructor = (Constructor<?>) aClass.getConstructor().newInstance();
             for (Method method : aClass.getDeclaredMethods()) {
 
                 if(method.isAnnotationPresent(Authenticate.class)) {
                     method.setAccessible(true);
-                    return (ResultActions) method.invoke(aClass.getConstructor().newInstance());
+                    return (ResultActions) method.invoke(object);
                 }
             }
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
 
