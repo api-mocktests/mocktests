@@ -29,11 +29,12 @@ public final class Request {
     private MediaType contentType;
 
     private Object body;
-    @Autowired
+
     private RequestUtils requestUtils;
 
-    public Request() {
+    public Request(RequestUtils requestUtils) {
         super();
+        this.requestUtils = requestUtils;
     }
 
     public Request operation(Operation operation) {
