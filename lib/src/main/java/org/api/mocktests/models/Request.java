@@ -54,8 +54,8 @@ public final class Request {
     }
 
     public Request params(MultiValueMap<String, String> params) {
-        if(params == null)
-            params = new LinkedMultiValueMap<>();
+        if(this.params == null)
+            this.params = new LinkedMultiValueMap<>();
         this.params.addAll(params);
         return this;
     }
