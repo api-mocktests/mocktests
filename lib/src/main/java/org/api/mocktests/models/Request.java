@@ -2,13 +2,16 @@ package org.api.mocktests.models;
 
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.utils.RequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.MultiValueMap;
 
+@Component
 public final class Request {
 
     private Operation operation;
@@ -26,12 +29,11 @@ public final class Request {
     private MediaType contentType;
 
     private Object body;
-
-    private final RequestUtils requestUtils;
+    @Autowired
+    private RequestUtils requestUtils;
 
     public Request() {
         super();
-        this.requestUtils = new RequestUtils();
     }
 
     public Request operation(Operation operation) {

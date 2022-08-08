@@ -3,12 +3,14 @@ package org.api.mocktests.extensions;
 import org.api.mocktests.annotations.Authenticate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Component
 public class AuthenticateExtension {
 
     @Autowired

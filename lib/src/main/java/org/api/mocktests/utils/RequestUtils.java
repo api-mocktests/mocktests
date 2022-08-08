@@ -10,12 +10,14 @@ import org.api.mocktests.models.Header;
 import org.api.mocktests.models.Operation;
 import org.api.mocktests.models.TypeHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+@Component
 public final class RequestUtils {
 
     @Autowired
