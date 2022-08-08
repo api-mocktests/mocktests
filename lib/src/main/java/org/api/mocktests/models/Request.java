@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 public final class Request {
@@ -20,8 +21,6 @@ public final class Request {
     private Object[] pathParams;
 
     private MultiValueMap<String, String> params;
-
-    private String[] param;
 
     private MediaType contentType;
 
@@ -55,12 +54,14 @@ public final class Request {
     }
 
     public Request params(MultiValueMap<String, String> params) {
-        this.params = params;
+        this.params.addAll(params);
         return this;
     }
 
-    public Request param(String... param) {
-        this.param = param;
+    public Request param(String key, String value) {
+        if(params == null)
+            params = new LinkedMultiValueMap<>();
+        params.add(key, value);
         return this;
     }
 
@@ -83,9 +84,6 @@ public final class Request {
 
         if(params != null)
             mockRequest.params(params);
-
-        if(param != null)
-            mockRequest.param(param[0],param[1]);
 
         if(header == null) {
             if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
