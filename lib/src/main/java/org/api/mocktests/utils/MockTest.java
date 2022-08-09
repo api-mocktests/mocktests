@@ -43,7 +43,7 @@ public final class MockTest {
 
     public ResultActions performRequest(Request request) throws Exception {
 
-        this.getClass(this.getCurrentMethod());
+        aClass = this.getClass(this.getCurrentMethod());
         request.verifyOperation();
         request.verifyEndpoint();
 
