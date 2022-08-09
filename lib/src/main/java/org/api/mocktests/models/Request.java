@@ -3,6 +3,7 @@ package org.api.mocktests.models;
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Component
@@ -17,8 +18,6 @@ public final class Request {
     private Object[] pathParams;
 
     private MultiValueMap<String, String> params;
-
-    private String[] param;
 
     private MediaType contentType;
 
@@ -49,12 +48,16 @@ public final class Request {
     }
 
     public Request params(MultiValueMap<String, String> params) {
-        this.params = params;
+        if(this.params == null)
+            this.params = new LinkedMultiValueMap<>();
+        this.params.addAll(params);
         return this;
     }
 
-    public Request param(String... param) {
-        this.param = param;
+    public Request param(String key, String value) {
+        if(params == null)
+            params = new LinkedMultiValueMap<>();
+        params.add(key, value);
         return this;
     }
 
@@ -93,10 +96,6 @@ public final class Request {
 
     public MultiValueMap<String, String> getParams() {
         return params;
-    }
-
-    public String[] getParam() {
-        return param;
     }
 
     public Header getHeader() {

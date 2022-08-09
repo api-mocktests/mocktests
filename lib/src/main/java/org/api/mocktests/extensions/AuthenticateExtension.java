@@ -1,29 +1,27 @@
 package org.api.mocktests.extensions;
 
 import org.api.mocktests.annotations.Authenticate;
+import org.api.mocktests.models.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Component
 public class AuthenticateExtension {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    public boolean methodLoginIsIstantiated(Class<?> aClass) {
+    public boolean fieldLoginIsIstantiated(Class<?> aClass) {
 
         try {
 
             //Class<?> c = object.getClass();
-            for (Method method : aClass.getDeclaredMethods()) {
+            for (Field field : aClass.getDeclaredFields()) {
 
-                if(method.isAnnotationPresent(Authenticate.class))
+                if(field.isAnnotationPresent(Authenticate.class))
                     return true;
             }
             return false;
@@ -32,19 +30,17 @@ public class AuthenticateExtension {
         }
     }
 
-    public ResultActions invokeMethodLogin(Class<?> aClass) {
+    public Request getFieldLogin(Class<?> aClass) {
 
         try {
-            //Object object = aClass.newInstance();
-            //Constructor<?> constructor = (Constructor<?>) aClass.getConstructor().newInstance();
-            for (Method method : aClass.getDeclaredMethods()) {
+            for (Field field : aClass.getDeclaredFields()) {
 
-                if(method.isAnnotationPresent(Authenticate.class)) {
-                    method.setAccessible(true);
-                    return (ResultActions) method.invoke(applicationContext.getBean(aClass));
+                if(field.isAnnotationPresent(Authenticate.class)) {
+                    field.setAccessible(true);
+                    return (Request) field.get(aClass.getConstructor().newInstance());
                 }
             }
-        } catch (InvocationTargetException | IllegalAccessException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 

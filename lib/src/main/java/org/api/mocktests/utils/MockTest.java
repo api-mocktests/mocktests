@@ -1,5 +1,6 @@
 package org.api.mocktests.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.exceptions.NotImplementedRequestException;
@@ -17,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -52,13 +52,11 @@ public final class MockTest {
         if(request.getParams() != null)
             mockRequest.params(request.getParams());
 
-        if(request.getParam() != null)
-            mockRequest.param(request.getParam()[0], request.getParam()[1]);
-
         if(request.getHeader() == null) {
             if(verifyMethodLogin() && methodIsAnnotAuthTest()) {
 
-                ResultActions resultLogin = invokeLogin();
+                Request requestLogin = getFieldLogin();
+                ResultActions resultLogin = mockMvc.perform(convertRequestLogin(requestLogin));
                 assert resultLogin != null;
                 MockHttpServletResponse response = resultLogin.andReturn().getResponse();
                 if(response.getStatus() >= 200 && response.getStatus() < 300) {
@@ -101,8 +99,31 @@ public final class MockTest {
 
         return mockMvc.perform(mockRequest);
     }
-    public ResultActions invokeLogin() {
-        return authenticateExtension.invokeMethodLogin(aClass);
+
+    private MockHttpServletRequestBuilder convertRequestLogin(Request req) throws Exception {
+
+        req.verifyEndpoint();
+        req.verifyOperation();
+        MockHttpServletRequestBuilder reqReturn = convertOperation(req.getOperation(), req.getEndpoint(), req.getPathParams());
+
+        if(req.getParams() != null)
+            reqReturn.params(req.getParams());
+
+        if(req.getContentType() == null && verifyAnnotAutoConfigureContext()) {
+            reqReturn.contentType(getAutoConfigureContextType());
+        }
+        else {
+            reqReturn.contentType(req.getContentType());
+        }
+
+        if(req.getBody() != null) {
+            reqReturn.content(objectMapper.writeValueAsString(req.getBody()));
+        }
+
+        return reqReturn;
+    }
+    public Request getFieldLogin() {
+        return authenticateExtension.getFieldLogin(aClass);
     }
     public boolean methodIsAnnotAuthTest() {
 
@@ -144,7 +165,7 @@ public final class MockTest {
     }
 
     public boolean verifyMethodLogin() {
-        return authenticateExtension.methodLoginIsIstantiated(aClass);
+        return authenticateExtension.fieldLoginIsIstantiated(aClass);
     }
 
     public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
