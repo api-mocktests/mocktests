@@ -27,7 +27,7 @@ public final class Request {
         super();
     }
 
-    public Request operation(Method method) {
+    public Request method(Method method) {
         this.method = method;
         return this;
     }
