@@ -9,9 +9,9 @@ import org.springframework.util.MultiValueMap;
 @Component
 public final class Request {
 
-    private Operation operation;
+    private Method method;
 
-    private String endpoint;
+    private String url;
 
     private Header header;
 
@@ -27,13 +27,13 @@ public final class Request {
         super();
     }
 
-    public Request operation(Operation operation) {
-        this.operation = operation;
+    public Request operation(Method method) {
+        this.method = method;
         return this;
     }
 
-    public Request endpoint(String endpoint) {
-        this.endpoint = endpoint;
+    public Request url(String url) {
+        this.url = url;
         return this;
     }
 
@@ -71,23 +71,23 @@ public final class Request {
         return this;
     }
 
-    public void verifyOperation() throws InvalidRequestException {
-        if(operation == null)
-            throw new InvalidRequestException("operation not nullable");
+    public void verifyMethod() throws InvalidRequestException {
+        if(method == null)
+            throw new InvalidRequestException("method not nullable");
     }
 
 
-    public void verifyEndpoint() throws InvalidRequestException {
-        if(endpoint == null)
+    public void verifyUrl() throws InvalidRequestException {
+        if(url == null)
             throw new InvalidRequestException("endpoint not nullable");
     }
 
-    public Operation getOperation() {
-        return operation;
+    public Method getMethod() {
+        return method;
     }
 
-    public String getEndpoint() {
-        return endpoint;
+    public String getUrl() {
+        return url;
     }
 
     public Object[] getPathParams() {

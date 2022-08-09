@@ -19,7 +19,6 @@ public class AuthenticatedTestExtension {
         List<String> listMethods = new ArrayList<>();
 
         try {
-            //Class<?> c = object.getClass();
             for(Method method : aClass.getDeclaredMethods()) {
                 if(method.isAnnotationPresent(AuthenticatedTest.class)) {
                     listMethods.add(method.getName());
@@ -32,14 +31,6 @@ public class AuthenticatedTestExtension {
         return listMethods;
     }
     public StackTraceElement getMethods() {
-
         return Thread.currentThread().getStackTrace()[4];
-        //StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-//        String[] listMethodsName = new String[5];
-//
-//        for(int i = 0; i < 5; i++) {
-//            listMethodsName[i] = stackTraceElements[i].getMethodName();
-//        }
-//        return listMethodsName;
     }
 }
