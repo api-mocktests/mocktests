@@ -1,19 +1,17 @@
 package org.api.mocktests.models;
 
 import org.api.mocktests.exceptions.InvalidRequestException;
-import org.api.mocktests.utils.RequestUtils;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+@Component
 public final class Request {
 
-    private Operation operation;
+    private Method method;
 
-    private String endpoint;
+    private String url;
 
     private Header header;
 
@@ -21,26 +19,21 @@ public final class Request {
 
     private MultiValueMap<String, String> params;
 
-    private String[] param;
-
     private MediaType contentType;
 
     private Object body;
 
-    private final RequestUtils requestUtils;
-
     public Request() {
         super();
-        this.requestUtils = new RequestUtils();
     }
 
-    public Request operation(Operation operation) {
-        this.operation = operation;
+    public Request operation(Method method) {
+        this.method = method;
         return this;
     }
 
-    public Request endpoint(String endpoint) {
-        this.endpoint = endpoint;
+    public Request url(String url) {
+        this.url = url;
         return this;
     }
 
@@ -55,12 +48,16 @@ public final class Request {
     }
 
     public Request params(MultiValueMap<String, String> params) {
-        this.params = params;
+        if(this.params == null)
+            this.params = new LinkedMultiValueMap<>();
+        this.params.addAll(params);
         return this;
     }
 
-    public Request param(String... param) {
-        this.param = param;
+    public Request param(String key, String value) {
+        if(params == null)
+            params = new LinkedMultiValueMap<>();
+        params.add(key, value);
         return this;
     }
 
@@ -74,74 +71,42 @@ public final class Request {
         return this;
     }
 
-    public RequestBuilder execute() throws Exception {
-
-        verifyOperation();
-        verifyEndpoint();
-
-        MockHttpServletRequestBuilder mockRequest = requestUtils.convertOperation(operation, endpoint, pathParams);
-
-        if(params != null)
-            mockRequest.params(params);
-
-        if(param != null)
-            mockRequest.param(param[0],param[1]);
-
-        if(header == null) {
-            if(requestUtils.verifyMethodLogin() && requestUtils.methodIsAnnotAuthTest()) {
-
-                ResultActions resultLogin = requestUtils.invokeLogin();
-                assert resultLogin != null;
-                MockHttpServletResponse response = resultLogin.andReturn().getResponse();
-                if(response.getStatus() >= 200 && response.getStatus() < 300) {
-                    if(response.getContentAsString().isEmpty() || response.getContentAsString().isBlank()) {
-                        String token = response.getHeader("Authorization");
-                        assert token != null;
-                        if(token.startsWith("Authorization:")) {
-                            String[] values = token.split(": ");
-                            token = values[1];
-                        }
-                        mockRequest.header("Authorization", token);
-                    }
-                    else {
-                        String tokenResponse = response.getContentAsString();
-                        String[] values = tokenResponse.split(":");
-                        mockRequest.header("Authorization", "Bearer " + values[1].split("\"")[1]);
-                    }
-                }
-            }
-            else if (requestUtils.verifyAnnotAutoConfigureHeader() && requestUtils.methodIsAnnotAuthTest()) {
-                String[] headerValues = requestUtils.getAutoConfigureHeader();
-                if(headerValues.length < 2)
-                    throw new InvalidRequestException("invalid auto configure header");
-                mockRequest.header(headerValues[0],headerValues[1]);
-            }
-        }
-        else {
-            mockRequest.header(header.getName(), requestUtils.convertTypeHeaders(header));
-        }
-
-        if(contentType == null && requestUtils.verifyAnnotAutoConfigureContext()) {
-            mockRequest.contentType(requestUtils.getAutoConfigureContextType());
-        }
-        else
-            mockRequest.contentType(contentType);
-
-        if(body != null)
-            mockRequest.content(requestUtils.getObjectMapper().writeValueAsString(body));
-
-
-        return mockRequest;
-    }
-
-    private void verifyOperation() throws InvalidRequestException {
-        if(operation == null)
-            throw new InvalidRequestException("operation not nullable");
+    public void verifyMethod() throws InvalidRequestException {
+        if(method == null)
+            throw new InvalidRequestException("method not nullable");
     }
 
 
-    private void verifyEndpoint() throws InvalidRequestException {
-        if(endpoint == null)
+    public void verifyUrl() throws InvalidRequestException {
+        if(url == null)
             throw new InvalidRequestException("endpoint not nullable");
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public Object[] getPathParams() {
+        return pathParams;
+    }
+
+    public MultiValueMap<String, String> getParams() {
+        return params;
+    }
+
+    public Header getHeader() {
+        return header;
+    }
+
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    public Object getBody() {
+        return body;
     }
 }

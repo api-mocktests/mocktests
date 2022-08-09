@@ -1,22 +1,20 @@
 package org.api.mocktests.extensions;
 
 import org.api.mocktests.annotations.Authenticate;
-import org.springframework.test.web.servlet.ResultActions;
+import org.api.mocktests.models.Request;
+import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
+@Component
 public class AuthenticateExtension {
 
-    public boolean methodLoginIsIstantiated(Class<?> aClass) {
+    public boolean fieldLoginIsIstantiated(Class<?> aClass) {
 
         try {
-
-            //Class<?> c = object.getClass();
-            for (Method method : aClass.getDeclaredMethods()) {
-
-                if(method.isAnnotationPresent(Authenticate.class))
+            for (Field field : aClass.getDeclaredFields()) {
+                if(field.isAnnotationPresent(Authenticate.class))
                     return true;
             }
             return false;
@@ -25,19 +23,17 @@ public class AuthenticateExtension {
         }
     }
 
-    public ResultActions invokeMethodLogin(Class<?> aClass) {
+    public Request getFieldLogin(Class<?> aClass) {
 
         try {
-            Object object = aClass.newInstance();
-            //Constructor<?> constructor = (Constructor<?>) aClass.getConstructor().newInstance();
-            for (Method method : aClass.getDeclaredMethods()) {
+            for (Field field : aClass.getDeclaredFields()) {
 
-                if(method.isAnnotationPresent(Authenticate.class)) {
-                    method.setAccessible(true);
-                    return (ResultActions) method.invoke(object);
+                if(field.isAnnotationPresent(Authenticate.class)) {
+                    field.setAccessible(true);
+                    return (Request) field.get(aClass.getConstructor().newInstance());
                 }
             }
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 
