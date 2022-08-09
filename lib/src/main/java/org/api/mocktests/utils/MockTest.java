@@ -114,11 +114,7 @@ public final class MockTest {
     }
 
     public StackTraceElement getCurrentMethod() {
-
-        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
-        for(int i = 0; i < stackTraceElement.length; i++)
-            System.out.println(stackTraceElement[i].getMethodName());
-        return Thread.currentThread().getStackTrace()[1];
+        return Thread.currentThread().getStackTrace()[3];
     }
 
     public Class<?> getClass(StackTraceElement stackTraceElement) {
