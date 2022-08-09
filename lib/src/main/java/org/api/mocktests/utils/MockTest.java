@@ -43,7 +43,7 @@ public final class MockTest {
 
     public ResultActions performRequest(Request request) throws Exception {
 
-        aClass = this.getClass(this.getCurrentMethod());
+        aClass = getClass(getCurrentMethod());
         request.verifyOperation();
         request.verifyEndpoint();
 
@@ -114,8 +114,11 @@ public final class MockTest {
     }
 
     public StackTraceElement getCurrentMethod() {
-        System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-        return Thread.currentThread().getStackTrace()[4];
+
+        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+        for(int i = 0; i < stackTraceElement.length; i++)
+            System.out.println(stackTraceElement[i].getMethodName());
+        return Thread.currentThread().getStackTrace()[1];
     }
 
     public Class<?> getClass(StackTraceElement stackTraceElement) {
