@@ -1,11 +1,13 @@
 package org.api.mocktests.extensions;
 
 import org.api.mocktests.annotations.AuthenticatedTest;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class AuthenticatedTestExtension {
 
     public AuthenticatedTestExtension() {

@@ -2,7 +2,9 @@ package org.api.mocktests.extensions;
 
 import org.api.mocktests.annotations.AutoConfigureRequest;
 import org.api.mocktests.exceptions.InvalidRequestException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AutoConfigureRequestExtension {
 
     public boolean classIsAnnotAutoConfigureContext(Class<?> aClass) {
