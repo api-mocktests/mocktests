@@ -31,7 +31,7 @@ public final class MockTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final Class<?> aClass = this.getClass(this.getCurrentMethod());
+    private Class<?> aClass;
     @Autowired
     private AuthenticateExtension authenticateExtension;
 
@@ -43,6 +43,7 @@ public final class MockTest {
 
     public ResultActions performRequest(Request request) throws Exception {
 
+        this.getClass(this.getCurrentMethod());
         request.verifyOperation();
         request.verifyEndpoint();
 
