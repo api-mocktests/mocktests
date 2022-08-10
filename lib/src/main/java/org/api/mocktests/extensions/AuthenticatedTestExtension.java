@@ -31,6 +31,6 @@ public class AuthenticatedTestExtension {
         return listMethods;
     }
     public StackTraceElement getMethods() {
-        return Thread.currentThread().getStackTrace()[4];
+        return Thread.currentThread().getStackTrace()[5];
     }
 }

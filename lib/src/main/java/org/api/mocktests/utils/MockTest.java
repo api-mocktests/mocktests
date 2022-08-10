@@ -41,7 +41,7 @@ public final class MockTest {
     private AutoConfigureRequestExtension autoConfigureRequestExtension;
 
     private void configureHeader(MockHttpServletRequestBuilder mockRequest) throws Exception {
-        if(verifyMethodLogin() && methodIsAnnotAuthTest()) {
+        if(verifyFieldLogin() && methodIsAnnotAuthTest()) {
 
             Request requestLogin = getFieldLogin();
             ResultActions resultLogin = mockMvc.perform(convertRequestLogin(requestLogin));
@@ -129,7 +129,6 @@ public final class MockTest {
     }
     public boolean methodIsAnnotAuthTest() {
 
-        //String[] methodsStack = authenticatedTestExtension.getMethods();
         StackTraceElement ste = authenticatedTestExtension.getMethods();
         List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(aClass);
 
@@ -166,7 +165,7 @@ public final class MockTest {
         return autoConfigureRequestExtension.getAutoConfigureHeader(aClass);
     }
 
-    public boolean verifyMethodLogin() {
+    public boolean verifyFieldLogin() {
         return authenticateExtension.fieldLoginIsIstantiated(aClass);
     }
 
