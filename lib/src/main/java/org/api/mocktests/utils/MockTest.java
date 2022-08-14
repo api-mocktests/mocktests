@@ -3,135 +3,217 @@ package org.api.mocktests.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.api.mocktests.exceptions.InvalidRequestException;
 import org.api.mocktests.exceptions.NotImplementedRequestException;
-import org.api.mocktests.exceptions.UnauthorizedRequestException;
 import org.api.mocktests.extensions.AuthenticateExtension;
 import org.api.mocktests.extensions.AuthenticatedTestExtension;
+import org.api.mocktests.extensions.AutoConfigureRequestExtension;
 import org.api.mocktests.models.Header;
-import org.api.mocktests.models.Operation;
+import org.api.mocktests.models.Method;
 import org.api.mocktests.models.Request;
 import org.api.mocktests.models.TypeHeader;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@EnableAutoConfiguration
-@AutoConfigureMockMvc
+@Component
 public final class MockTest {
 
     @Autowired
-    @InjectMocks
     private MockMvc mockMvc;
 
     @Autowired
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
-    private static Object object;
+    private Class<?> aClass;
+    @Autowired
+    private AuthenticateExtension authenticateExtension;
 
-    private final AuthenticateExtension authenticateExtension = new AuthenticateExtension();
-    private final AuthenticatedTestExtension authenticatedTestExtension = new AuthenticatedTestExtension(object);
+    @Autowired
+    private AuthenticatedTestExtension authenticatedTestExtension;
 
-    public MockTest(Object object) {
-        super();
-        MockTest.object = object;
-    }
+    @Autowired
+    private AutoConfigureRequestExtension autoConfigureRequestExtension;
 
-    public void performTest(Request request) throws Exception {
+    private void configureHeader(MockHttpServletRequestBuilder mockRequest) throws Exception {
+        if(verifyFieldLogin() && methodIsAnnotAuthTest()) {
 
-        verifyRequest(request);
-        if(request.getHeader() == null) {
-            if(authenticateExtension.fieldLoginIsIstantiated(object)) {
-
-                String[] methodsStack = authenticatedTestExtension.getMethods();
-                List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(object);
-
-                if(methodsAuthenticatedTest.contains(methodsStack[3])) {
-
-                    Request requestLogin = authenticateExtension.getFieldLogin(object);
-                    ResultActions resultLogin = invokeLogin(requestLogin);
-                    if (resultLogin.andReturn().getResponse().getStatus() >= 200 && resultLogin.andReturn().getResponse().getStatus() < 300) {
-                        String token = resultLogin.andReturn().getResponse().getContentAsString();
-                        String[] values = token.split(" ");
-                        mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                                .header(values[0], values[1], values[2])
-                                .contentType(request.getContentType())
-                                .content(objectMapper.writeValueAsString(request.getBody())));
-                    } else
-                        throw new UnauthorizedRequestException("Login failed.");
+            Request requestLogin = getFieldLogin();
+            ResultActions resultLogin = mockMvc.perform(convertRequestLogin(requestLogin));
+            assert resultLogin != null;
+            MockHttpServletResponse response = resultLogin.andReturn().getResponse();
+            if (response.getStatus() >= 200 && response.getStatus() < 300) {
+                if (response.getContentAsString().isEmpty() || response.getContentAsString().isBlank()) {
+                    String token = response.getHeader("Authorization");
+                    assert token != null;
+                    if (token.startsWith("Authorization:")) {
+                        String[] values = token.split(": ");
+                        token = values[1];
+                    }
+                    mockRequest.header("Authorization", token);
+                } else {
+                    String tokenResponse = response.getContentAsString();
+                    String[] values = tokenResponse.split(":");
+                    mockRequest.header("Authorization", "Bearer " + values[1].split("\"")[1]);
                 }
             }
-            mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                    .contentType(request.getContentType())
-                    .content(objectMapper.writeValueAsString(request.getBody())));
+        }
+        else if (verifyAnnotAutoConfigureHeader() && methodIsAnnotAuthTest()) {
+            String[] headerValues = getAutoConfigureHeader();
+            if(headerValues.length < 2)
+                throw new InvalidRequestException("invalid auto configure header");
+            mockRequest.header(headerValues[0],headerValues[1]);
+        }
+    }
+    public ResultActions performRequest(Request request) throws Exception {
+
+        aClass = getClass(getCurrentMethod());
+        request.verifyMethod();
+        request.verifyUrl();
+
+        MockHttpServletRequestBuilder mockRequest = convertOperation(request.getMethod(), request.getUrl(), request.getPathParams());
+
+        if(request.getParams() != null)
+            mockRequest.params(request.getParams());
+
+        if(request.getHeader() == null) {
+            configureHeader(mockRequest);
+        }
+        else if(request.getHeader().getName() == null) {
+            configureRequestHeader(request);
+        }
+        else {
+            mockRequest.header(request.getHeader().getName(), convertTypeHeaders(request.getHeader()));
+        }
+
+        if(request.getContentType() == null && verifyAnnotAutoConfigureContext()) {
+            mockRequest.contentType(getAutoConfigureContextType());
         }
         else
-            mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                .header(request.getHeader().getName(), convertTypeHeaders(request.getHeader()))
-                .contentType(request.getContentType())
-                .content(objectMapper.writeValueAsString(request.getBody())));
+            mockRequest.contentType(request.getContentType());
+
+        if(request.getBody() != null)
+            mockRequest.content(objectMapper.writeValueAsString(request.getBody()));
+
+
+        return mockMvc.perform(mockRequest);
     }
 
-    private String convertTypeHeaders(Header header) throws NotImplementedRequestException {
+    private void configureRequestHeader(Request request) throws InvalidRequestException {
 
-        if(header.getTypeHeader().equals(TypeHeader.BEARER))
-            return String.format("%s %s",header.getTypeHeader().name(), header.getValues()[0]);
+        String[] headerValues = getAutoConfigureHeader();
+        if(headerValues.length < 2)
+            throw new InvalidRequestException("invalid auto configure header");
+
+        if(headerValues[1].contains("Bearer")) {
+            request.header(headerValues[0], TypeHeader.BEARER, request.getHeader().getValues());
+        }
+        else
+            throw new InvalidRequestException("invalid auto configure header");
+    }
+
+    private MockHttpServletRequestBuilder convertRequestLogin(Request req) throws Exception {
+
+        req.verifyUrl();
+        req.verifyMethod();
+        MockHttpServletRequestBuilder reqReturn = convertOperation(req.getMethod(), req.getUrl(), req.getPathParams());
+
+        if(req.getParams() != null)
+            reqReturn.params(req.getParams());
+
+        if(req.getContentType() == null && verifyAnnotAutoConfigureContext()) {
+            reqReturn.contentType(getAutoConfigureContextType());
+        }
+        else {
+            reqReturn.contentType(req.getContentType());
+        }
+
+        if(req.getBody() != null) {
+            reqReturn.content(objectMapper.writeValueAsString(req.getBody()));
+        }
+
+        return reqReturn;
+    }
+    public Request getFieldLogin() {
+        return authenticateExtension.getFieldLogin(aClass);
+    }
+    public boolean methodIsAnnotAuthTest() {
+
+        StackTraceElement ste = authenticatedTestExtension.getMethods();
+        List<String> methodsAuthenticatedTest = authenticatedTestExtension.getMethodsAuthenticatedTest(aClass);
+
+        return methodsAuthenticatedTest.contains(ste.getMethodName());
+    }
+
+    public StackTraceElement getCurrentMethod() {
+        return Thread.currentThread().getStackTrace()[3];
+    }
+
+    public Class<?> getClass(StackTraceElement stackTraceElement) {
+
+        String className = stackTraceElement.getClassName();
+        try {
+            return ClassLoader.getSystemClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean verifyAnnotAutoConfigureContext() {
+        return autoConfigureRequestExtension.classIsAnnotAutoConfigureContext(aClass);
+    }
+
+    public boolean verifyAnnotAutoConfigureHeader() {
+        return autoConfigureRequestExtension.classIsAnnotAutoConfigureHeader(aClass);
+    }
+
+    public String getAutoConfigureContextType() throws InvalidRequestException {
+        return autoConfigureRequestExtension.getAutoConfigureContextType(aClass);
+    }
+
+    public String[] getAutoConfigureHeader() throws InvalidRequestException {
+        return autoConfigureRequestExtension.getAutoConfigureHeader(aClass);
+    }
+
+    public boolean verifyFieldLogin() {
+        return authenticateExtension.fieldLoginIsIstantiated(aClass);
+    }
+
+    public String convertTypeHeaders(Header header) throws NotImplementedRequestException {
+
+        if(header.getTypeHeader().equals(TypeHeader.BEARER)) {
+            return String.format("%s %s", header.getTypeHeader().getTypeHeader(), header.getValues()[0]);
+        }
 
         throw new NotImplementedRequestException(String.format("Type header %s not implemented!",header.getName()));
     }
 
-    private ResultActions invokeLogin(Request request) throws Exception {
+    public MockHttpServletRequestBuilder convertOperation(Method method, String endpoint, Object[] params) {
 
-        if(mockMvc != null) {
-            System.out.println(mockMvc.toString());
-        }
-        else
-            System.out.println("mockMvc NULL");
-
-        if(objectMapper != null) {
-            System.out.println(objectMapper.toString());
-        }
-        else
-            System.out.println("objectMapper NULL");
-
-        System.out.println("OPERATION: "+ request.getOperation().name());
-        System.out.println("ENDPOINT: "+request.getEndpoint());
-        System.out.println("PARAMS: "+ Arrays.toString(request.getParams()));
-        System.out.println("CONTENT TYPE: "+request.getContentType());
-        System.out.println("BODY: "+request.getBody().toString()+"\n");
-
-        return mockMvc.perform(convertOperation(request.getOperation(), request.getEndpoint(), request.getParams())
-                .contentType(request.getContentType())
-                .content(objectMapper.writeValueAsString(request.getBody())));
-    }
-    private MockHttpServletRequestBuilder convertOperation(Operation operation, String endpoint, Object[] params) {
-
-        if(operation.equals(Operation.GET)) {
+        if(method.equals(Method.GET)) {
             if(params == null || params.length == 0)
                 return get(endpoint);
             return get(endpoint, params);
         }
 
-        if(operation.equals(Operation.POST)) {
+        if(method.equals(Method.POST)) {
             if(params == null || params.length == 0)
                 return post(endpoint);
             return post(endpoint, params);
         }
 
-        if(operation.equals(Operation.PUT)) {
+        if(method.equals(Method.PUT)) {
             if(params == null || params.length == 0)
                 return put(endpoint);
             return put(endpoint, params);
         }
 
-        if(operation.equals(Operation.DELETE)) {
+        if(method.equals(Method.DELETE)) {
             if(params == null || params.length == 0)
                 return delete(endpoint);
             return delete(endpoint, params);
@@ -140,12 +222,5 @@ public final class MockTest {
         if(params == null || params.length == 0)
             return patch(endpoint);
         return patch(endpoint, params);
-    }
-
-    private void verifyRequest(Request request) throws InvalidRequestException {
-        if(request.getOperation() == null)
-            throw new InvalidRequestException();
-        if(request.getEndpoint() == null)
-            throw new InvalidRequestException();
     }
 }

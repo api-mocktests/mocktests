@@ -1,74 +1,117 @@
 package org.api.mocktests.models;
 
+import org.api.mocktests.exceptions.InvalidRequestException;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+@Component
 public final class Request {
 
-    private static Operation operation;
+    private Method method;
 
-    private static String endpoint;
+    private String url;
 
-    private static Header header;
+    private Header header;
 
-    private static Object[] params;
+    private Object[] pathParams;
 
-    private static String contentType;
+    private MultiValueMap<String, String> params;
 
-    private static Object body;
+    private MediaType contentType;
 
-    public Request operation(Operation operation) {
-        Request.operation = operation;
+    private Object body;
+
+    public Request() {
+        super();
+    }
+
+    public Request method(Method method) {
+        this.method = method;
         return this;
     }
 
-    public Request endpoint(String endpoint) {
-        Request.endpoint = endpoint;
+    public Request url(String url) {
+        this.url = url;
         return this;
     }
 
     public Request header(String name, TypeHeader typeHeader, String... values) {
-        Request.header = new Header(name, typeHeader, values);
+        this.header = new Header(name, typeHeader, values);
         return this;
     }
 
-    public Request params(Object... params) {
-        Request.params = params;
+    public Request header(String... values) {
+        this.header = new Header(null, null, values);
         return this;
     }
 
-    public Request contentType(String contentType) {
-        Request.contentType = contentType;
+    public Request pathParams(Object... pathParams) {
+        this.pathParams = pathParams;
+        return this;
+    }
+
+    public Request params(MultiValueMap<String, String> params) {
+        if(this.params == null)
+            this.params = new LinkedMultiValueMap<>();
+        this.params.addAll(params);
+        return this;
+    }
+
+    public Request param(String key, String value) {
+        if(params == null)
+            params = new LinkedMultiValueMap<>();
+        params.add(key, value);
+        return this;
+    }
+
+    public Request contentType(MediaType contentType) {
+        this.contentType = contentType;
         return this;
     }
 
     public Request body(Object body) {
-        Request.body = body;
+        this.body = body;
         return this;
     }
 
-    /*
-    *  GETTERS
-    */
-
-    public Operation getOperation() {
-        return operation;
+    public void verifyMethod() throws InvalidRequestException {
+        if(method == null)
+            throw new InvalidRequestException("method not nullable");
     }
 
-    public String getEndpoint() {
-        return endpoint;
+
+    public void verifyUrl() throws InvalidRequestException {
+        if(url == null)
+            throw new InvalidRequestException("endpoint not nullable");
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public Object[] getPathParams() {
+        return pathParams;
+    }
+
+    public MultiValueMap<String, String> getParams() {
+        return params;
     }
 
     public Header getHeader() {
         return header;
     }
 
-    public Object[] getParams() {
-        return params;
+    public MediaType getContentType() {
+        return contentType;
     }
 
     public Object getBody() {
         return body;
-    }
-
-    public String getContentType() {
-        return contentType;
     }
 }

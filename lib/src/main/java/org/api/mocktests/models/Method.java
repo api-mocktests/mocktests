@@ -1,15 +1,15 @@
 package org.api.mocktests.models;
 
-public enum Operation {
+public enum Method {
     GET("get"),
     POST("post"),
     PUT("put"),
     DELETE("delete"),
     PATCH("patch");
 
-    private String operation;
+    private String method;
 
-    Operation(String operation) {
-        this.operation = operation;
+    Method(String method) {
+        this.method = method;
     }
 }
