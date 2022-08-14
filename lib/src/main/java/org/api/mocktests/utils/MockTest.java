@@ -85,7 +85,8 @@ public final class MockTest {
             configureHeader(mockRequest);
         }
         else if(request.getHeader().getName() == null) {
-            configureRequestHeader(request);
+            Header header = configureRequestHeader(request);
+            mockRequest.header(header.getName(), convertTypeHeaders(header));
         }
         else {
             mockRequest.header(request.getHeader().getName(), convertTypeHeaders(request.getHeader()));
@@ -104,17 +105,16 @@ public final class MockTest {
         return mockMvc.perform(mockRequest);
     }
 
-    private void configureRequestHeader(Request request) throws InvalidRequestException {
+    private Header configureRequestHeader(Request request) throws InvalidRequestException {
 
         String[] headerValues = getAutoConfigureHeader();
         if(headerValues.length < 2)
             throw new InvalidRequestException("invalid auto configure header");
 
         if(headerValues[1].contains("Bearer")) {
-            request.header(headerValues[0], TypeHeader.BEARER, request.getHeader().getValues());
+            return new Header(headerValues[0], TypeHeader.BEARER, request.getHeader().getValues());
         }
-        else
-            throw new InvalidRequestException("invalid auto configure header");
+        throw new InvalidRequestException("invalid auto configure header");
     }
 
     private MockHttpServletRequestBuilder convertRequestLogin(Request req) throws Exception {
