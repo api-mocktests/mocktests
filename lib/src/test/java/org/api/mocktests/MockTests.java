@@ -34,7 +34,7 @@ public class MockTests {
     @Test
     //@AuthenticatedTest
     public void test01() throws Exception {
-        mockMvc.perform(post("/api")).andExpect(status().is4xxClientError());
+        //mockMvc.perform(post("/api")).andExpect(status().is4xxClientError());
         mockTest.performTest(new Request().operation(Operation.POST).endpoint("/api/1").contentType("application/json").body("objeto1"));
     }
 

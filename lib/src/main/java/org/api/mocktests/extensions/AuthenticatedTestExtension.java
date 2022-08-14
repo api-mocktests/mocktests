@@ -39,6 +39,8 @@ public class AuthenticatedTestExtension {
 
         for(int i = 0; i < 5; i++) {
             listMethodsName[i] = stackTraceElements[i].getMethodName();
+            Class<?> cla = stackTraceElements[i].getClass();
+            System.out.println(cla.getName());
         }
         System.out.printf("[%s, %s, %s, %s, %s]%n",listMethodsName[0], listMethodsName[1], listMethodsName[2], listMethodsName[3], listMethodsName[4]);
         return listMethodsName;
