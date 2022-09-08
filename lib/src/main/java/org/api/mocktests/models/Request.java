@@ -23,6 +23,8 @@ public final class Request {
 
     private Object body;
 
+    private String content;
+
     public Request() {
         super();
     }
@@ -76,6 +78,11 @@ public final class Request {
         return this;
     }
 
+    public Request body(String body) {
+        this.content = body;
+        return this;
+    }
+
     public void verifyMethod() throws InvalidRequestException {
         if(method == null)
             throw new InvalidRequestException("method not nullable");
@@ -113,5 +120,9 @@ public final class Request {
 
     public Object getBody() {
         return body;
+    }
+
+    public String getContent() {
+        return content;
     }
 }
