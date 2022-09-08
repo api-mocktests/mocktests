@@ -78,8 +78,8 @@ public final class Request {
         return this;
     }
 
-    public Request body(String body) {
-        this.content = body;
+    public Request bodyJson(String bodyJson) {
+        this.content = bodyJson;
         return this;
     }
 
