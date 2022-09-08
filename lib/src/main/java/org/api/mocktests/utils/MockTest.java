@@ -101,7 +101,7 @@ public final class MockTest {
         if(request.getBody() != null) {
 
             if(request.getBody().getClass().isInstance(String.class)) {
-                mockRequest.content(request.getBody());
+                mockRequest.content(String.format("%s", request.getBody()));
             }
             else
                 mockRequest.content(objectMapper.writeValueAsString(request.getBody()));
