@@ -98,9 +98,14 @@ public final class MockTest {
         else
             mockRequest.contentType(request.getContentType());
 
-        if(request.getBody() != null)
-            mockRequest.content(objectMapper.writeValueAsString(request.getBody()));
+        if(request.getBody() != null) {
 
+            if(request.getBody().getClass().isInstance(String.class)) {
+                mockRequest.content(request.getBody());
+            }
+            else
+                mockRequest.content(objectMapper.writeValueAsString(request.getBody()));
+        }
 
         return mockMvc.perform(mockRequest);
     }
