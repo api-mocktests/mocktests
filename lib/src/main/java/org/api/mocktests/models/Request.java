@@ -23,7 +23,7 @@ public final class Request {
 
     private Object body;
 
-    private String content;
+    private String json;
 
     public Request() {
         super();
@@ -78,8 +78,8 @@ public final class Request {
         return this;
     }
 
-    public Request bodyJson(String bodyJson) {
-        this.content = bodyJson;
+    public Request json(String json) {
+        this.json = json;
         return this;
     }
 
@@ -122,7 +122,7 @@ public final class Request {
         return body;
     }
 
-    public String getContent() {
-        return content;
+    public String getJson() {
+        return json;
     }
 }

@@ -98,13 +98,10 @@ public final class MockTest {
         else
             mockRequest.contentType(request.getContentType());
 
-        if(request.getBody() != null) {
-
-            if(request.getContent() != null)
-                mockRequest.content(request.getContent());
-            else
-                mockRequest.content(objectMapper.writeValueAsString(request.getBody()));
-        }
+        if(request.getJson() != null)
+            mockRequest.content(request.getJson());
+        else if(request.getBody() != null)
+            mockRequest.content(objectMapper.writeValueAsString(request.getBody()));
 
         return mockMvc.perform(mockRequest);
     }
