@@ -15,6 +15,10 @@ Este projeto é uma biblioteca Java construída com Gradle que encapsula lógica
 Disponivel no Jitpack: 
 https://jitpack.io/#api-mocktests/mocktests/1.7.5
 
+## Documentação oficial
+
+http://dspace.sti.ufcg.edu.br:8080/xmlui/handle/riufcg/29272
+
 ### Utilizando em projetos Gradle: 
 
 Adicione esta linha em seus projetos no ```build.gradle```
